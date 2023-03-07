@@ -1,4 +1,4 @@
-// useEffect: HTTP requests
+// useEffect: HTTP requests - store the state in an object
 // http://localhost:3000/isolated/exercise/06.js
 
 import * as React from 'react'
@@ -21,11 +21,11 @@ const statuses = {
 }
 
 function PokemonInfo({pokemonName}) {
-  // 🐨 Have state for the pokemon (null)
-
-  const [pokemon, setPokemon] = React.useState(null)
-  const [error, setError] = React.useState(null)
-  const [status, setStatus] = React.useState(statuses.idle)
+  const [{status, pokemon, error}, setState] = React.useState({
+    status: 'idle',
+    pokemon: null,
+    error: null,
+  })
 
   // 🐨 use React.useEffect where the callback should be called whenever the
   // pokemon name changes.
@@ -38,7 +38,7 @@ function PokemonInfo({pokemonName}) {
       // (This is to enable the loading state when switching between different pokemon.)
 
       // 🐨 setPokemon(null)
-      setStatus(statuses.pending)
+      setState({status: statuses.pending})
 
       // 💰 Use the `fetchPokemon` function to fetch a pokemon by its name:
       //   fetchPokemon('Pikachu').then(
@@ -47,12 +47,10 @@ function PokemonInfo({pokemonName}) {
 
       fetchPokemon(pokemonName).then(
         pokemonData => {
-          setPokemon(pokemonData)
-          setStatus(statuses.resolved)
+          setState({status: statuses.resolved, pokemon: pokemonData})
         },
         error => {
-          setError(error)
-          setStatus(statuses.rejected)
+          setState({error, status: statuses.rejected})
         },
       )
     }
